@@ -13,6 +13,14 @@ from deap import gp
 import arff
 
 
+
+def protectedDiv(a, b):
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return 1
+
+
 def split_data(data, split_percentage):
     x = int(len(data)*split_percentage)
     return data[0:x], data[x:]
@@ -22,7 +30,7 @@ def get_primitive_set_china():
     pset.addPrimitive(operator.add, 2)
     pset.addPrimitive(operator.sub, 2)
     pset.addPrimitive(operator.mul, 2)
-    #pset.addPrimitive(protectedDiv, 2)
+    pset.addPrimitive(protectedDiv, 2)
     pset.addPrimitive(operator.neg, 1)
 
     pset.addEphemeralConstant("rand101", lambda: random.randint(-100, 100)) #do i need????
@@ -48,7 +56,7 @@ def get_primitive_set_albrecht():
     pset.addPrimitive(operator.add, 2)
     pset.addPrimitive(operator.sub, 2)
     pset.addPrimitive(operator.mul, 2)
-    #pset.addPrimitive(protectedDiv, 2)
+    pset.addPrimitive(protectedDiv, 2)
     pset.addPrimitive(operator.neg, 1)
 
     pset.addEphemeralConstant("rand101", lambda: random.randint(-1, 1)) #do i need????
@@ -70,14 +78,14 @@ def get_fitness_function_china(toolbox):
         # Evaluate the mean squared error between the expression
         # randomly select some samples
         #fitness =  mean error for samples
-        r_samples_size = 30
-        r_samples = random.sample(data, r_samples_size)
-        total_error = 0
+        # r_samples_size = 30
+        # r_samples = random.sample(data, r_samples_size)
+        total_percentage_error = 0
         for s in data:
-            total_error += abs(func(s[1], s[2], s[3], s[4], s[5], s[6], s[7], \
-                    s[8], s[9], s[10], s[11], s[12], s[13], s[14], s[15]) - s[-1])
+            total_percentage_error += abs(func(s[1], s[2], s[3], s[4], s[5], s[6], s[7], \
+                    s[8], s[9], s[10], s[11], s[12], s[13], s[14], s[15]) - s[-1]) / s[-1]
 
-        return  (total_error/len(data),)
+        return  (total_percentage_error/len(data),)
 
     return evaluate
 
@@ -91,19 +99,19 @@ def get_fitness_function_albrecht(toolbox):
         #fitness =  mean error for samples
         #r_samples_size = 30
         #r_samples = random.sample(data, r_samples_size)
-        total_error = 0
+        total_percentage_error = 0
         for s in data:
-            total_error += abs(func(s[0], s[1], s[2], s[3], s[4], s[5], s[6]) - s[-1])
+            total_percentage_error += abs(func(s[0], s[1], s[2], s[3], s[4], s[5], s[6]) - s[-1]) / s[-1]
 
-        return  (total_error/len(data),)
+        return  (total_percentage_error/len(data),)
 
     return evaluate
 
 def main():
-    data = arff.load(open('Data/china.arff'))
+    data = arff.load(open('Data/albrecht.arff'))
     # variables  = data
     training_data, test_data = split_data(data['data'], 0.75)
-    pset = get_primitive_set_china()
+    pset = get_primitive_set_albrecht()
     print()
 
     creator.create("FitnessMin" , base.Fitness, weights=(-1.0,))  # -1.0 as its a minimise function
@@ -115,7 +123,7 @@ def main():
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
     toolbox.register("compile", gp.compile, pset=pset)
 
-    fit_func = get_fitness_function_china(toolbox)
+    fit_func = get_fitness_function_albrecht(toolbox)
     toolbox.register("evaluate", fit_func, training_data)
     toolbox.register("select", tools.selTournament, tournsize=3)
     toolbox.register("mate", gp.cxOnePoint)
