@@ -14,8 +14,7 @@ from deap import gp
 import arff
 
 
-
-def protectedDiv(a, b):
+def protected_div(a, b):
     try:
         return a / b
     except ZeroDivisionError:
@@ -31,7 +30,7 @@ def get_primitive_set_china():
     pset.addPrimitive(operator.add, 2)
     pset.addPrimitive(operator.sub, 2)
     pset.addPrimitive(operator.mul, 2)
-    pset.addPrimitive(protectedDiv, 2)
+    pset.addPrimitive(protected_div, 2)
     pset.addPrimitive(operator.neg, 1)
 
     pset.addEphemeralConstant("rand101", lambda: random.randint(-100, 100)) #do i need????
@@ -57,7 +56,7 @@ def get_primitive_set_albrecht():
     pset.addPrimitive(operator.add, 2)
     pset.addPrimitive(operator.sub, 2)
     pset.addPrimitive(operator.mul, 2)
-    pset.addPrimitive(protectedDiv, 2)
+    pset.addPrimitive(protected_div, 2)
     pset.addPrimitive(operator.neg, 1)
 
     pset.addEphemeralConstant("rand101", lambda: random.randint(-100, 100))
@@ -76,7 +75,7 @@ def get_primitive_set_miyazaki():
     pset.addPrimitive(operator.add, 2)
     pset.addPrimitive(operator.sub, 2)
     pset.addPrimitive(operator.mul, 2)
-    pset.addPrimitive(protectedDiv, 2)
+    pset.addPrimitive(protected_div, 2)
     pset.addPrimitive(operator.neg, 1)
 
     pset.addEphemeralConstant("rand101", lambda: random.randint(-100, 100))
